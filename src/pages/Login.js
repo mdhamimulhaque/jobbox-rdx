@@ -5,11 +5,14 @@ import { useNavigate } from "react-router-dom";
 import loginImage from "../assets/login.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { googleLogin, loginUser } from "../features/auth/authSlice";
+import toast from "react-hot-toast";
 const Login = () => {
   const { register, handleSubmit, reset } = useForm();
   const navigate = useNavigate();
   const disPatch = useDispatch();
-  const { email, isLoading } = useSelector((state) => state.auth);
+  const { email, isLoading, isError, error } = useSelector(
+    (state) => state.auth
+  );
 
   const onSubmit = (data) => {
     disPatch(
@@ -27,8 +30,15 @@ const Login = () => {
   useEffect(() => {
     if (!isLoading && email) {
       navigate("/");
+      toast.success("User login Successfully!");
     }
   }, [isLoading, email]);
+
+  useEffect(() => {
+    if (isError && error) {
+      toast.error(error);
+    }
+  }, [isError, error]);
 
   return (
     <div className="flex h-screen items-center">
