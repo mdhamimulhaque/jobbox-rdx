@@ -33,6 +33,11 @@ export const loginUser = createAsyncThunk(
 const authSlice = createSlice({
   name: "auth",
   initialState,
+  reducers: {
+    logoutUser: (state) => {
+      state.email = "";
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(createUser.pending, (state) => {
@@ -72,4 +77,5 @@ const authSlice = createSlice({
   },
 });
 
+export const { logoutUser } = authSlice.actions;
 export default authSlice.reducer;
