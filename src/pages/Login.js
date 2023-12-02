@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import loginImage from "../assets/login.svg";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser } from "../features/auth/authSlice";
+import { googleLogin, loginUser } from "../features/auth/authSlice";
 const Login = () => {
   const { register, handleSubmit, reset } = useForm();
   const navigate = useNavigate();
@@ -18,6 +18,10 @@ const Login = () => {
         password: data.password,
       })
     );
+  };
+
+  const handleGoogleLogin = () => {
+    disPatch(googleLogin());
   };
 
   useEffect(() => {
@@ -70,6 +74,15 @@ const Login = () => {
                     Sign up
                   </span>
                 </p>
+              </div>
+              <div>
+                <button
+                  onClick={handleGoogleLogin}
+                  type="button"
+                  className="font-bold text-white py-3 rounded-full bg-primary w-full"
+                >
+                  Login with Google
+                </button>
               </div>
             </div>
           </form>
