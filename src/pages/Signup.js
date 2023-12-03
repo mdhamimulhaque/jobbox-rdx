@@ -12,9 +12,12 @@ const Signup = () => {
   const navigate = useNavigate();
   const [disabled, setDisabled] = useState(true);
   const disPatch = useDispatch();
-  const { isLoading, email, isError, error } = useSelector(
-    (state) => state.auth
-  );
+  const {
+    user: { email },
+    isLoading,
+    isError,
+    error,
+  } = useSelector((state) => state.auth);
 
   const handleGoogleLogin = () => {
     disPatch(googleLogin());
