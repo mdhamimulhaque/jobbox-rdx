@@ -32,7 +32,11 @@ export const loginUser = createAsyncThunk(
 export const getUser = createAsyncThunk("auth/getUser", async (email) => {
   const res = await fetch(`${process.env.REACT_APP_dev_server}/user/${email}`);
   const data = await res.json();
-  return data.data;
+  if (data.status) {
+    return data;
+  } else {
+    return email;
+  }
 });
 
 export const googleLogin = createAsyncThunk("auth/googleLogin", async () => {
@@ -111,9 +115,14 @@ const authSlice = createSlice({
         state.isError = false;
         state.error = "";
       })
-      .addCase(getUser.fulfilled, (state, action) => {
+      .addCase(getUser.fulfilled, (state, { payload }) => {
         state.isLoading = false;
-        state.user = action.payload;
+        if (payload.status) {
+          state.user = payload.data;
+        } else {
+          state.user.email = payload;
+        }
+
         state.isError = false;
         state.error = "";
       })
