@@ -8,8 +8,8 @@ import { useGetJobByIdQuery } from "../features/job/jobApi";
 const JobDetails = () => {
   const { id } = useParams();
 
-  const { data } = useGetJobByIdQuery(id);
-  console.log(id, data);
+  const { data, isLoading } = useGetJobByIdQuery(id);
+  console.log(id, data, isLoading);
 
   const {
     companyName,
