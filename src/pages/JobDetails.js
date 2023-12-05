@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import meeting from "../assets/meeting.jpg";
 import { BsArrowRightShort, BsArrowReturnRight } from "react-icons/bs";
@@ -9,7 +9,9 @@ const JobDetails = () => {
   const { id } = useParams();
 
   const { data, isLoading } = useGetJobByIdQuery(id);
-  console.log(id, data, isLoading);
+  if (isLoading) {
+    return <h2>loading...</h2>;
+  }
 
   const {
     companyName,
@@ -25,7 +27,7 @@ const JobDetails = () => {
     overview,
     queries,
     _id,
-  } = {};
+  } = data?.data || {};
 
   return (
     <div className="pt-14 grid grid-cols-12 gap-5">
@@ -45,7 +47,7 @@ const JobDetails = () => {
           <div>
             <h1 className="text-primary text-lg font-medium mb-3">Skills</h1>
             <ul>
-              {skills.map((skill) => (
+              {skills?.map((skill) => (
                 <li className="flex items-center">
                   <BsArrowRightShort /> <span>{skill}</span>
                 </li>
@@ -69,7 +71,7 @@ const JobDetails = () => {
               Responsibilities
             </h1>
             <ul>
-              {responsibilities.map((skill) => (
+              {responsibilities?.map((skill) => (
                 <li className="flex items-center">
                   <BsArrowRightShort /> <span>{skill}</span>
                 </li>
@@ -84,7 +86,7 @@ const JobDetails = () => {
               General Q&A
             </h1>
             <div className="text-primary my-2">
-              {queries.map(({ question, email, reply, id }) => (
+              {queries?.map(({ question, email, reply, id }) => (
                 <div>
                   <small>{email}</small>
                   <p className="text-lg font-medium">{question}</p>
@@ -175,6 +177,7 @@ const JobDetails = () => {
         </div>
       </div>
     </div>
+    // <div>test</div>
   );
 };
 
