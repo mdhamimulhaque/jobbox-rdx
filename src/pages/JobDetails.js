@@ -2,15 +2,21 @@ import React, { useEffect, useState } from "react";
 
 import meeting from "../assets/meeting.jpg";
 import { BsArrowRightShort, BsArrowReturnRight } from "react-icons/bs";
-import { useParams } from "react-router-dom";
-import { useGetJobByIdQuery } from "../features/job/jobApi";
+import { useNavigate, useParams } from "react-router-dom";
+import { useApplyMutation, useGetJobByIdQuery } from "../features/job/jobApi";
+import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
+import Loading from "../components/reusable/Loading";
 
 const JobDetails = () => {
   const { id } = useParams();
+  const [apply] = useApplyMutation();
+  const { user } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
 
   const { data, isLoading } = useGetJobByIdQuery(id);
   if (isLoading) {
-    return <h2>loading...</h2>;
+    return <Loading />;
   }
 
   const {
@@ -29,6 +35,22 @@ const JobDetails = () => {
     _id,
   } = data?.data || {};
 
+  const handleJobApply = () => {
+    if (user?.role === "employer") {
+      toast.error("You need a candidate account to apply");
+      return;
+    }
+    if (user?.role === "") {
+      navigate("/register");
+    }
+    const data = {
+      userId: user?._id,
+      email: user?.email,
+      jobId: _id,
+    };
+    apply(data);
+  };
+
   return (
     <div className="pt-14 grid grid-cols-12 gap-5">
       <div className="col-span-9 mb-10">
@@ -38,7 +60,9 @@ const JobDetails = () => {
         <div className="space-y-5">
           <div className="flex justify-between items-center mt-5">
             <h1 className="text-xl font-semibold text-primary">{position}</h1>
-            <button className="btn">Apply</button>
+            <button className="btn" onClick={handleJobApply}>
+              Apply
+            </button>
           </div>
           <div>
             <h1 className="text-primary text-lg font-medium mb-3">Overview</h1>
@@ -177,7 +201,6 @@ const JobDetails = () => {
         </div>
       </div>
     </div>
-    // <div>test</div>
   );
 };
 
