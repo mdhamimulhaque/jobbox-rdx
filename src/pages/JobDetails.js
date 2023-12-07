@@ -7,6 +7,7 @@ import {
   useApplyMutation,
   useGetJobByIdQuery,
   useQuestionMutation,
+  useReplyMutation,
 } from "../features/job/jobApi";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
@@ -20,8 +21,11 @@ const JobDetails = () => {
   const navigate = useNavigate();
   const { register, handleSubmit, reset } = useForm();
   const [sendQuestion] = useQuestionMutation();
+  const [sendReply] = useReplyMutation();
 
   const { data, isLoading } = useGetJobByIdQuery(id);
+  const [reply, setReply] = useState("");
+
   if (isLoading) {
     return <Loading />;
   }
@@ -67,6 +71,13 @@ const JobDetails = () => {
     };
     sendQuestion(question);
     reset();
+  };
+  const handleReply = (id) => {
+    const data = {
+      reply,
+      userId: id,
+    };
+    sendReply(data);
   };
 
   return (
@@ -137,41 +148,47 @@ const JobDetails = () => {
                       <BsArrowReturnRight /> {item}
                     </p>
                   ))}
-                  <form>
-                    <div className="flex gap-3 my-5">
-                      <input
-                        placeholder="Reply"
-                        type="text"
-                        className="w-full"
-                      />
-                      <button
-                        className="shrink-0 h-14 w-14 bg-primary/10 border border-primary hover:bg-primary rounded-full transition-all  grid place-items-center text-primary hover:text-white"
-                        type="submit"
-                      >
-                        <BsArrowRightShort size={30} />
-                      </button>
-                    </div>
-                  </form>
+                  {user?.role === "employer" && (
+                    <form>
+                      <div className="flex gap-3 my-5">
+                        <input
+                          placeholder="Reply"
+                          type="text"
+                          className="w-full"
+                          onBlur={(e) => setReply(e.target.value)}
+                        />
+                        <button
+                          className="shrink-0 h-14 w-14 bg-primary/10 border border-primary hover:bg-primary rounded-full transition-all  grid place-items-center text-primary hover:text-white"
+                          type="button"
+                          onClick={() => handleReply(id)}
+                        >
+                          <BsArrowRightShort size={30} />
+                        </button>
+                      </div>
+                    </form>
+                  )}
                 </div>
               ))}
             </div>
-            <form action="#">
-              <div className="flex gap-3 my-5">
-                <input
-                  placeholder="Ask a question..."
-                  type="text"
-                  className="w-full"
-                  {...register("question")}
-                />
-                <button
-                  onClick={handleSubmit(handleQuestion)}
-                  className="shrink-0 h-14 w-14 bg-primary/10 border border-primary hover:bg-primary rounded-full transition-all  grid place-items-center text-primary hover:text-white"
-                  type="submit"
-                >
-                  <BsArrowRightShort size={30} />
-                </button>
-              </div>
-            </form>
+            {user?.role === "candidate" && (
+              <form action="#">
+                <div className="flex gap-3 my-5">
+                  <input
+                    placeholder="Ask a question..."
+                    type="text"
+                    className="w-full"
+                    {...register("question")}
+                  />
+                  <button
+                    onClick={handleSubmit(handleQuestion)}
+                    className="shrink-0 h-14 w-14 bg-primary/10 border border-primary hover:bg-primary rounded-full transition-all  grid place-items-center text-primary hover:text-white"
+                    type="submit"
+                  >
+                    <BsArrowRightShort size={30} />
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       </div>
