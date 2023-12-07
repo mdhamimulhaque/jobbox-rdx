@@ -23,7 +23,9 @@ const JobDetails = () => {
   const [sendQuestion] = useQuestionMutation();
   const [sendReply] = useReplyMutation();
 
-  const { data, isLoading } = useGetJobByIdQuery(id);
+  const { data, isLoading } = useGetJobByIdQuery(id, {
+    pollingInterval: 30000,
+  });
   const [reply, setReply] = useState("");
 
   if (isLoading) {
